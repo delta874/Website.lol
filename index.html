@@ -1,1 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Delta Radio</title>
+<style>
+body {
+    background: black;
+    color: #00ffff;
+    font-family: monospace;
+    text-align: center;
+    padding-top: 100px;
+}
 
+button {
+    background: #00ffff;
+    border: none;
+    padding: 15px 30px;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+#song {
+    margin-top: 20px;
+    font-size: 20px;
+}
+</style>
+</head>
+<body>
+
+<h1>🎵 DELTA RADIO 🎵</h1>
+<p>24/7 Generated Chiptune</p>
+
+<button onclick="startMusic()">START RADIO</button>
+
+<div id="song">NOW PLAYING: Procedural Track #001</div>
+
+<script>
+const AudioContext = window.AudioContext || window.webkitAudioContext;
+const audioCtx = new AudioContext();
+
+const scale = [
+  261.63, // C
+  293.66, // D
+  329.63, // E
+  349.23, // F
+  392.00, // G
+  440.00, // A
+  493.88  // B
+];
+
+function playNote(freq, duration) {
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+
+    osc.type = "square";
+
+    osc.frequency.value = freq;
+
+    gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(
+      0.001,
+      audioCtx.currentTime + duration
+    );
+
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+
+    osc.start();
+    osc.stop(audioCtx.currentTime + duration);
+}
+
+let playing = false;
+
+function randomMelody() {
+    if (!playing) return;
+
+    const note = scale[Math.floor(Math.random() * scale.length)];
+
+    playNote(note, 0.2);
+
+    setTimeout(randomMelody, 250);
+}
+
+function startMusic() {
+    if (playing) return;
+
+    playing = true;
+    randomMelody();
+}
+</script>
+
+</body>
+</html>
